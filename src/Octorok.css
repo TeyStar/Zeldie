@@ -1,0 +1,20 @@
+/* src/Octorok.css */
+.octorok {
+    transition: background-color 0.1s;
+    width: 30px;
+    height: 30px;
+}
+
+    .octorok.hit {
+        animation: flash 0.4s steps(4) forwards;
+    }
+
+@keyframes flash {
+    0%, 100% {
+        background-color: white;
+    }
+
+    50% {
+        background-color: cyan;
+    }
+}

@@ -1,0 +1,8 @@
+.game {
+    width: 480px;
+    height: 330px;
+    border: 1px solid black;
+    position: relative;
+    background-color: green;
+    outline: none;
+}

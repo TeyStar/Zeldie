@@ -1,0 +1,53 @@
+.player {
+    width: 30px;
+    height: 30px;
+    background-color: red;
+    position: absolute;
+}
+
+    .player.up {
+        /* Add styles for facing up if needed */
+    }
+
+    .player.down {
+        /* Add styles for facing down if needed */
+    }
+
+    .player.left {
+        /* Add styles for facing left if needed */
+    }
+
+    .player.right {
+        /* Add styles for facing right if needed */
+    }
+
+    .player.attacking .sword {
+        position: absolute;
+        width: 10px;
+        height: 30px;
+        background-color: silver;
+    }
+
+    .player.up .sword {
+        top: -30px;
+        left: 10px;
+    }
+
+    .player.down .sword {
+        top: 30px;
+        left: 10px;
+    }
+
+    .player.left .sword {
+        top: 10px;
+        left: -30px;
+        width: 30px;
+        height: 10px;
+    }
+
+    .player.right .sword {
+        top: 10px;
+        left: 30px;
+        width: 30px;
+        height: 10px;
+    }
