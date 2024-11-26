@@ -1,12 +1,17 @@
 /* src/Octorok.css */
 .octorok {
-    transition: background-color 0.1s;
+    transition: background-color 0.1s, width 1s, height 1s; /* Add width and height transition */
     width: 30px;
     height: 30px;
 }
 
     .octorok.hit {
         animation: flash 0.4s steps(4) forwards;
+    }
+
+    .octorok.dead {
+        width: 1px; /* Shrink to 1px */
+        height: 1px; /* Shrink to 1px */
     }
 
 @keyframes flash {

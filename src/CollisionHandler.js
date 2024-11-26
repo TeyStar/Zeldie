@@ -1,4 +1,6 @@
+// src/CollisionHandler.js
 import React, { useEffect } from 'react';
+import { applyKnockback } from './Knockback';
 
 const CollisionHandler = ({
     playerPosition,
@@ -41,13 +43,26 @@ const CollisionHandler = ({
                     setOctorokHealth(octorokHealth - 1);
                     setIsHit(true);
                     setFlashFrame(0);
+
+                    // Knockback logic
+                    const knockbackDistance = 60;
+                    const newOctorokPosition = applyKnockback(
+                        swordRect,
+                        octorokRect,
+                        octorokPosition,
+                        knockbackDistance,
+                        gameWidth,
+                        gameHeight,
+                        playerSize
+                    );
+
+                    setOctorokPosition(newOctorokPosition);
                 }
             }
         };
 
-        const interval = setInterval(checkCollision, 1000 / 32); // 32 frames per second
-        return () => clearInterval(interval);
-    }, [isPlayerAttacking, swordPosition, swordSize, octorokPosition, octorokHealth, setOctorokHealth, setIsHit, setFlashFrame]);
+        checkCollision();
+    }, [isPlayerAttacking, octorokHealth, swordPosition, octorokPosition, playerSize, swordSize, setOctorokHealth, setIsHit, setFlashFrame, setOctorokPosition, gameWidth, gameHeight]);
 
     return null;
 };

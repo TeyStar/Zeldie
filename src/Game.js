@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PlayerComponent from './PlayerComponent';
 import OctorokComponent from './OctorokComponent';
+import OctorokSpawner from './OctorokSpawner';
 import './Game.css';
 
 function Game() {
@@ -62,6 +63,14 @@ function Game() {
                 isPlayerAttacking={isAttacking} // Pass the attack state
                 swordRef={swordRef} // Pass swordRef to OctorokComponent
                 swordPosition={swordPosition} // Pass swordPosition to OctorokComponent
+            />
+            <OctorokSpawner
+                gameWidth={gameWidth}
+                gameHeight={gameHeight}
+                playerPosition={playerPosition}
+                isPlayerAttacking={isAttacking} // Pass the attack state
+                swordRef={swordRef} // Pass swordRef to OctorokSpawner
+                swordPosition={swordPosition} // Pass swordPosition to OctorokSpawner
             />
         </div>
     );
