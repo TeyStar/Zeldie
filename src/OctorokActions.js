@@ -44,3 +44,49 @@ export const updateProjectiles = (projectiles, setProjectiles, gameWidth, gameHe
             .filter(projectile => projectile.x >= 0 && projectile.x <= gameWidth && projectile.y >= 0 && projectile.y <= gameHeight)
     );
 };
+
+export const updateOctorokPosition = (octorokPosition, setOctorokPosition, octorokDirection, setOctorokDirection, octorokFrames, setOctorokFrames, isPaused, setIsPaused, isShooting, setIsShooting, playerPosition, gameWidth, gameHeight, playerSize, shortPauseDuration, lastAction, setLastAction, projectileSpeed, setProjectiles, octorokMoveSpeed) => {
+    setOctorokPosition(prevPosition => {
+        if (isPaused || isShooting) {
+            if (octorokFrames <= 0 && !isShooting) {
+                let action;
+                do { action = Math.floor(Math.random() * 5); } while (action === lastAction);
+                setLastAction(action);
+                if (action === 4) {
+                    shootProjectiles(octorokPosition, playerSize, projectileSpeed, setProjectiles, setOctorokFrames, setIsPaused, setIsShooting);
+                } else if (action === 3) {
+                    setOctorokDirection(4);
+                    setOctorokFrames(10);
+                    setIsPaused(false);
+                } else if (action === 2) {
+                    chooseNewDirection(setOctorokDirection, setOctorokFrames, setIsPaused);
+                    setOctorokFrames(10);
+                } else if (action === 1) {
+                    setOctorokFrames(20);
+                    setIsPaused(false);
+                } else {
+                    chooseNewDirection(setOctorokDirection, setOctorokFrames, setIsPaused);
+                }
+            } else {
+                setOctorokFrames(octorokFrames - 1);
+            }
+        } else {
+            if (octorokFrames <= 0) {
+                setIsPaused(true);
+                setOctorokFrames(shortPauseDuration);
+            } else {
+                const newPosition = { ...prevPosition };
+                if (octorokDirection === 0) newPosition.y = Math.max(prevPosition.y - octorokMoveSpeed, 0);
+                else if (octorokDirection === 1) newPosition.y = Math.min(prevPosition.y + octorokMoveSpeed, gameHeight - playerSize);
+                else if (octorokDirection === 2) newPosition.x = Math.max(prevPosition.x - octorokMoveSpeed, 0);
+                else if (octorokDirection === 3) newPosition.x = Math.min(prevPosition.x + octorokMoveSpeed, gameWidth - playerSize);
+                else moveTowardsPlayer(playerPosition, prevPosition, setOctorokDirection);
+                if (newPosition.x === 0 || newPosition.x === gameWidth - playerSize || newPosition.y === 0 || newPosition.y === gameHeight - playerSize)
+                    setOctorokDirection(reverseDirection(octorokDirection));
+                setOctorokFrames(octorokFrames - 1);
+                return newPosition;
+            }
+        }
+        return prevPosition;
+    });
+};

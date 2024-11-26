@@ -1,6 +1,6 @@
 /* src/Octorok.css */
 .octorok {
-    transition: background-color 0.1s, width 1s, height 1s; /* Add width and height transition */
+    transition: background-color 0.2s, width 1s, height 1s; /* Add width and height transition */
     width: 30px;
     height: 30px;
 }

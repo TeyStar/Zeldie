@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import Octorok from './Octorok';
 import CollisionHandler from './CollisionHandler';
-import { chooseNewDirection, moveTowardsPlayer, reverseDirection, shootProjectiles, updateProjectiles } from './OctorokActions';
+import { chooseNewDirection, moveTowardsPlayer, reverseDirection, shootProjectiles, updateProjectiles, updateOctorokPosition } from './OctorokActions';
+import { handleDeath } from './Death';
 
 const OctorokComponent = ({ gameWidth, gameHeight, playerSize, octorokMoveSpeed, playerPosition, isPlayerAttacking, swordRef, swordPosition }) => {
     const [octorokPosition, setOctorokPosition] = useState({ x: 200, y: 200 });
@@ -19,52 +20,6 @@ const OctorokComponent = ({ gameWidth, gameHeight, playerSize, octorokMoveSpeed,
     const shortPauseDuration = 64;
     const projectileSpeed = octorokMoveSpeed * 2;
     const shootingDuration = 32;
-
-    const updateOctorokPosition = () => {
-        setOctorokPosition(prevPosition => {
-            if (isPaused || isShooting) {
-                if (octorokFrames <= 0 && !isShooting) {
-                    let action;
-                    do { action = Math.floor(Math.random() * 5); } while (action === lastAction);
-                    setLastAction(action);
-                    if (action === 4) {
-                        shootProjectiles(octorokPosition, playerSize, projectileSpeed, setProjectiles, setOctorokFrames, setIsPaused, setIsShooting);
-                    } else if (action === 3) {
-                        setOctorokDirection(4);
-                        setOctorokFrames(10);
-                        setIsPaused(false);
-                    } else if (action === 2) {
-                        chooseNewDirection(setOctorokDirection, setOctorokFrames, setIsPaused);
-                        setOctorokFrames(10);
-                    } else if (action === 1) {
-                        setOctorokFrames(20);
-                        setIsPaused(false);
-                    } else {
-                        chooseNewDirection(setOctorokDirection, setOctorokFrames, setIsPaused);
-                    }
-                } else {
-                    setOctorokFrames(octorokFrames - 1);
-                }
-            } else {
-                if (octorokFrames <= 0) {
-                    setIsPaused(true);
-                    setOctorokFrames(shortPauseDuration);
-                } else {
-                    const newPosition = { ...prevPosition };
-                    if (octorokDirection === 0) newPosition.y = Math.max(prevPosition.y - octorokMoveSpeed, 0);
-                    else if (octorokDirection === 1) newPosition.y = Math.min(prevPosition.y + octorokMoveSpeed, gameHeight - playerSize);
-                    else if (octorokDirection === 2) newPosition.x = Math.max(prevPosition.x - octorokMoveSpeed, 0);
-                    else if (octorokDirection === 3) newPosition.x = Math.min(prevPosition.x + octorokMoveSpeed, gameWidth - playerSize);
-                    else moveTowardsPlayer(playerPosition, prevPosition, setOctorokDirection);
-                    if (newPosition.x === 0 || newPosition.x === gameWidth - playerSize || newPosition.y === 0 || newPosition.y === gameHeight - playerSize)
-                        setOctorokDirection(reverseDirection(octorokDirection));
-                    setOctorokFrames(octorokFrames - 1);
-                    return newPosition;
-                }
-            }
-            return prevPosition;
-        });
-    };
 
     const checkOctorokHit = () => {
         const distance = Math.hypot(playerPosition.x - octorokPosition.x, playerPosition.y - octorokPosition.y);
@@ -86,7 +41,28 @@ const OctorokComponent = ({ gameWidth, gameHeight, playerSize, octorokMoveSpeed,
 
     useEffect(() => {
         const interval = setInterval(() => {
-            updateOctorokPosition();
+            updateOctorokPosition(
+                octorokPosition,
+                setOctorokPosition,
+                octorokDirection,
+                setOctorokDirection,
+                octorokFrames,
+                setOctorokFrames,
+                isPaused,
+                setIsPaused,
+                isShooting,
+                setIsShooting,
+                playerPosition,
+                gameWidth,
+                gameHeight,
+                playerSize,
+                shortPauseDuration,
+                lastAction,
+                setLastAction,
+                projectileSpeed,
+                setProjectiles,
+                octorokMoveSpeed
+            );
             updateProjectiles(projectiles, setProjectiles, gameWidth, gameHeight);
             checkOctorokHit();
         }, 1000 / 32);

@@ -4,11 +4,11 @@ import OctorokComponent from './OctorokComponent';
 
 const OctorokSpawner = ({ gameWidth, gameHeight, playerPosition, isPlayerAttacking, swordRef, swordPosition }) => {
     const [octoroks, setOctoroks] = useState([]);
-    const maxOctoroks = 3;
+    const maxOctoroks = 10;
 
     useEffect(() => {
         const handleKeyDown = (event) => {
-            if (event.key === 'p' && octoroks.length < maxOctoroks) {
+            if (event.key === 'p') {
                 spawnOctorok();
             }
         };
@@ -20,14 +20,25 @@ const OctorokSpawner = ({ gameWidth, gameHeight, playerPosition, isPlayerAttacki
     }, [octoroks]);
 
     const spawnOctorok = () => {
-        const newOctorok = {
-            id: Date.now(),
-            position: {
+        const availableOctorok = octoroks.find(octorok => !octorok.isActive);
+        if (availableOctorok) {
+            availableOctorok.isActive = true;
+            availableOctorok.position = {
                 x: Math.random() * (gameWidth - 30),
                 y: Math.random() * (gameHeight - 30)
-            }
-        };
-        setOctoroks([...octoroks, newOctorok]);
+            };
+            setOctoroks([...octoroks]);
+        } else if (octoroks.length < maxOctoroks) {
+            const newOctorok = {
+                id: Date.now(),
+                isActive: true,
+                position: {
+                    x: Math.random() * (gameWidth - 30),
+                    y: Math.random() * (gameHeight - 30)
+                }
+            };
+            setOctoroks([...octoroks, newOctorok]);
+        }
     };
 
     return (
@@ -43,6 +54,11 @@ const OctorokSpawner = ({ gameWidth, gameHeight, playerPosition, isPlayerAttacki
                     swordPosition={swordPosition}
                     octorokMoveSpeed={5}
                     initialPosition={octorok.position}
+                    isActive={octorok.isActive}
+                    onDeath={() => {
+                        octorok.isActive = false;
+                        setOctoroks([...octoroks]);
+                    }}
                 />
             ))}
         </>
